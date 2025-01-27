@@ -2,7 +2,7 @@
 
 # Отображение версии операционной системы
 echo "=== Версия ОС ==="
-cat /etc/os-release | grep -E '^PRETTY_NAME' | awk -F '="' '{print $2}' | sed 's/"$//'
+grep -E '^PRETTY_NAME' /etc/os-release | awk -F '="' '{print $2}' | sed 's/"$//'
 
 # Функция для отображения общей информации о ЦП
 cpu_usage() {
@@ -18,9 +18,6 @@ cpu_usage() {
 memory_usage() {
     echo "=== Использование памяти ==="
     read total used free <<< $(free -h | awk '/^Mem:/ {print $2, $3, $4}')
-    total_clean=$(echo $total | sed "s/[^0-9.]//g")
-    used_clean=$(echo $used | sed "s/[^0-9.]//g")
-    free_clean=$(echo $free | sed "s/[^0-9.]//g")
 
     # Вычисление процента использования
     total_bytes=$(free -b | awk '/^Mem:/ {print $2}')
@@ -33,11 +30,7 @@ memory_usage() {
 # Функция для отображения использования диска
 disk_usage() {
     echo "=== Использование диска ==="
-    if df -h --total > /dev/null 2>&1; then
-        df -h --total | awk '/^total/ {printf "Всего: %s, Использовано: %s, Свободно: %s (%s занято)\n", $2, $3, $4, $5}'
-    else
-        df -h | awk 'NR>1 {used+=$3; free+=$4; total+=$2} END {printf "Всего: %.1fG, Использовано: %.1fG, Свободно: %.1fG (%.2f%% занято)\n", total, used, free, (used/total)*100}'
-    fi
+    df -h --total | awk '/^total/ {printf "Всего: %s, Использовано: %s, Свободно: %s (%s занято)\n", $2, $3, $4, $5}'
 }
 
 # Функция для отображения топ-5 процессов по использованию ЦП
