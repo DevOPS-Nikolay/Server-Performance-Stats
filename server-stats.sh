@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 # Отображение версии операционной системы
 echo "=== Версия ОС ==="
 cat /etc/os-release | grep -E '^PRETTY_NAME' | awk -F '="' '{print $2}' | sed 's/"$//'
